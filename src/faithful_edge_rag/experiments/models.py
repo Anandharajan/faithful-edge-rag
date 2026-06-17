@@ -98,3 +98,14 @@ class AggregateMetricRow:
     avg_edge_to_central_bytes_ci95: float
     avg_latency_units_mean: float
     avg_latency_units_ci95: float
+
+
+@dataclass(frozen=True)
+class RetrievalBenchmarkRow:
+    dataset: str
+    queries: int
+    corpus_documents: int
+    recall_at_5: float
+    recall_at_10: float
+    mrr_at_10: float
+    ndcg_at_10: float

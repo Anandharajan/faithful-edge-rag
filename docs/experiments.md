@@ -71,3 +71,23 @@ Additional ablations:
 
 - `edge_cloud_no_conflict_detection`
 - `edge_cloud_no_context_budget`
+
+## Real-World Public Benchmark: BEIR SciFact
+
+Run the public SciFact retrieval benchmark:
+
+```bash
+python -m faithful_edge_rag.experiments.run_beir \
+  --data-dir data/benchmarks \
+  --output-dir results/beir-scifact
+```
+
+The command downloads BEIR SciFact into `data/benchmarks` if it is not already cached.
+
+Outputs:
+
+- `results/beir-scifact/metrics.json`
+- `results/beir-scifact/metrics.csv`
+- `results/beir-scifact/summary.md`
+
+This benchmark currently evaluates the deterministic BM25-style lexical retriever. The next SCI-grade step is to add Qdrant plus open-source embedding models and compare dense, lexical, and hybrid retrieval on the same public dataset.

@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from faithful_edge_rag.experiments.beir import evaluate_scifact, write_benchmark_result
 from faithful_edge_rag.experiments.models import Condition
 from faithful_edge_rag.experiments.publication import run_publication_track
 from faithful_edge_rag.experiments.reporting import write_results
@@ -67,3 +68,42 @@ def test_publication_track_aggregates_seeded_runs() -> None:
     assert proposed.conflict_f1_mean >= no_conflict.conflict_f1_mean
     assert proposed.seeds == 3
     assert proposed.queries_per_seed == 20
+
+
+def test_beir_fixture_evaluates_retrieval_metrics(tmp_path: Path) -> None:
+    dataset_dir = tmp_path / "scifact"
+    qrels_dir = dataset_dir / "qrels"
+    qrels_dir.mkdir(parents=True)
+    (dataset_dir / "corpus.jsonl").write_text(
+        "\n".join(
+            [
+                (
+                    '{"_id": "d1", "title": "Aspirin", '
+                    '"text": "Aspirin reduces platelet aggregation."}'
+                ),
+                '{"_id": "d2", "title": "Insulin", "text": "Insulin regulates blood glucose."}',
+                (
+                    '{"_id": "d3", "title": "Noise", '
+                    '"text": "This document discusses unrelated astronomy."}'
+                ),
+            ]
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    (dataset_dir / "queries.jsonl").write_text(
+        '{"_id": "q1", "text": "What reduces platelet aggregation?"}\n',
+        encoding="utf-8",
+    )
+    (qrels_dir / "test.tsv").write_text(
+        "query-id\tcorpus-id\tscore\nq1\t0\td1\t1\n",
+        encoding="utf-8",
+    )
+
+    row = evaluate_scifact(dataset_dir)
+    write_benchmark_result(row, tmp_path / "out")
+
+    assert row.queries == 1
+    assert row.corpus_documents == 3
+    assert row.recall_at_10 == 1.0
+    assert (tmp_path / "out" / "summary.md").exists()

@@ -105,6 +105,14 @@ python -m faithful_edge_rag.experiments.run_publication \
   --output-dir results/publication
 ```
 
+Run the BEIR SciFact public retrieval benchmark:
+
+```bash
+python -m faithful_edge_rag.experiments.run_beir \
+  --data-dir data/benchmarks \
+  --output-dir results/beir-scifact
+```
+
 See [docs/experiments.md](docs/experiments.md) for the current metric definitions and publication-grade extension plan.
 
 ## License
