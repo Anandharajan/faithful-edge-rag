@@ -1,0 +1,94 @@
+# Open-Source Faithful Edge-Cloud RAG
+
+Research prototype for a fully open-source edge-cloud retrieval-augmented generation system that answers questions over distributed, private, and conflicting knowledge sources.
+
+The research problem is:
+
+> How can a fully open-source edge-cloud RAG system answer questions over distributed private knowledge while optimizing latency, compute cost, privacy exposure, and citation faithfulness under ambiguous or conflicting evidence?
+
+See [PRD.md](PRD.md) for the literature-grounded product and research design.
+
+## Goals
+
+- Compare centralized RAG, long-context RAG, edge-only RAG, and edge-cloud faithful RAG.
+- Measure answer quality, retrieval quality, citation faithfulness, conflict handling, privacy exposure, latency, and compute cost.
+- Run without proprietary managed AI services.
+- Provide a reproducible open-source stack for local and distributed experiments.
+
+## Default Stack
+
+- API: FastAPI, Uvicorn, Pydantic
+- Agents: LangGraph
+- LLM serving: vLLM for central inference, llama.cpp or Ollama for edge inference
+- Vector search: Qdrant centrally, LanceDB/FAISS/SQLite-vec at the edge
+- Metadata: PostgreSQL
+- Object storage: MinIO
+- Queues: Redis
+- Observability: OpenTelemetry, Prometheus, Grafana, Loki, Jaeger
+- Deployment: Docker Compose for local reproducibility, K3s/Kubernetes for distributed experiments
+
+## Repository Layout
+
+```text
+src/faithful_edge_rag/   Python package
+tests/                   Unit and integration test scaffolding
+docs/                    Research and architecture notes
+.github/                 CI and GitHub templates
+PRD.md                   Research PRD
+docker-compose.yml       Local development services
+```
+
+## Local Development
+
+Prerequisites:
+
+- Python 3.11+
+- Docker and Docker Compose
+
+Create a virtual environment and install development dependencies:
+
+```bash
+python -m venv .venv
+. .venv/bin/activate
+pip install -e ".[dev]"
+```
+
+Run checks:
+
+```bash
+ruff check .
+mypy src
+pytest
+```
+
+Or run the same checks through `make`:
+
+```bash
+make check
+```
+
+Start local infrastructure:
+
+```bash
+docker compose up -d postgres qdrant minio redis prometheus grafana
+```
+
+Run the API:
+
+```bash
+uvicorn faithful_edge_rag.api.main:app --reload
+```
+
+Health check:
+
+```bash
+curl http://localhost:8000/health
+```
+
+## Current Status
+
+This repository currently contains the research PRD and software skeleton. The next implementation milestone is the baseline centralized RAG service with document registration, chunk metadata storage, embedding integration, and Qdrant retrieval.
+
+## License
+
+Apache License 2.0. See [LICENSE](LICENSE).
