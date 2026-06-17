@@ -95,6 +95,16 @@ Run the initial experiments:
 python -m faithful_edge_rag.experiments.run --output-dir results/initial
 ```
 
+Run the seeded publication-track synthetic benchmark:
+
+```bash
+python -m faithful_edge_rag.experiments.run_publication \
+  --seeds 10 \
+  --topics 120 \
+  --edge-nodes 4 \
+  --output-dir results/publication
+```
+
 See [docs/experiments.md](docs/experiments.md) for the current metric definitions and publication-grade extension plan.
 
 ## License

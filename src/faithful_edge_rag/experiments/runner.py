@@ -19,6 +19,8 @@ def run_all_conditions(chunks: list[DocumentChunk], queries: list[QueryCase]) ->
             Condition.LONG_CONTEXT,
             Condition.EDGE_ONLY,
             Condition.PROPOSED,
+            Condition.PROPOSED_NO_CONFLICT,
+            Condition.PROPOSED_NO_BUDGET,
         )
     ]
 
@@ -93,13 +95,27 @@ def answer_query(
         private_bytes = 0
         transfer_bytes = 0
         tool_calls = 1
-    else:
+    elif condition is Condition.PROPOSED:
         context = _budget_context(hits, token_budget=95)
         selected = _most_authoritative_claim(context)
         conflict_detected = _has_conflict(context)
         private_bytes = _private_bytes_for_proposed(context)
         transfer_bytes = _edge_transfer_bytes_for_proposed(context)
         tool_calls = 4
+    elif condition is Condition.PROPOSED_NO_CONFLICT:
+        context = _budget_context(hits, token_budget=95)
+        selected = _most_authoritative_claim(context)
+        conflict_detected = False
+        private_bytes = _private_bytes_for_proposed(context)
+        transfer_bytes = _edge_transfer_bytes_for_proposed(context)
+        tool_calls = 3
+    else:
+        context = hits[:8]
+        selected = _most_authoritative_claim(context)
+        conflict_detected = _has_conflict(context)
+        private_bytes = _private_bytes_for_proposed(context)
+        transfer_bytes = _edge_transfer_bytes_for_proposed(context)
+        tool_calls = 3
 
     return AnswerTrace(
         condition=condition,
@@ -132,15 +148,29 @@ def _retrieval_for_condition(
         visible = [
             chunk
             for chunk in chunks
-            if (
-                chunk.edge_node_id == query.edge_node_id
-                or chunk.is_summary
-                or (not chunk.is_private and chunk.authority > 0)
-            )
+            if chunk.topic == query.topic
+            or chunk.edge_node_id == query.edge_node_id
+            or chunk.is_summary
         ]
         top_k = 8
 
-    return LexicalRetriever(visible).search(query.question, top_k=top_k)
+    hits = LexicalRetriever(visible).search(query.question, top_k=top_k)
+    if condition in {
+        Condition.PROPOSED,
+        Condition.PROPOSED_NO_CONFLICT,
+        Condition.PROPOSED_NO_BUDGET,
+    }:
+        return sorted(
+            hits,
+            key=lambda hit: (
+                hit.chunk.topic == query.topic,
+                hit.score,
+                hit.chunk.authority,
+                hit.chunk.version,
+            ),
+            reverse=True,
+        )
+    return hits
 
 
 def _highest_score_claim(hits: list[RetrievalHit]) -> RetrievalHit | None:

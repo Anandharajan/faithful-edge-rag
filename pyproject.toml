@@ -39,6 +39,7 @@ rag = [
 
 [project.scripts]
 faithful-edge-rag-experiments = "faithful_edge_rag.experiments.run:main"
+faithful-edge-rag-publication = "faithful_edge_rag.experiments.run_publication:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

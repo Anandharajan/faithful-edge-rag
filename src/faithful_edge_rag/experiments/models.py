@@ -7,6 +7,8 @@ class Condition(StrEnum):
     LONG_CONTEXT = "long_context_rag"
     EDGE_ONLY = "edge_only_rag"
     PROPOSED = "edge_cloud_faithful_rag"
+    PROPOSED_NO_CONFLICT = "edge_cloud_no_conflict_detection"
+    PROPOSED_NO_BUDGET = "edge_cloud_no_context_budget"
 
 
 @dataclass(frozen=True)
@@ -71,3 +73,28 @@ class MetricRow:
     avg_edge_to_central_bytes: float
     avg_latency_units: float
     avg_tool_calls: float
+
+
+@dataclass(frozen=True)
+class AggregateMetricRow:
+    condition: Condition
+    seeds: int
+    queries_per_seed: int
+    answer_accuracy_mean: float
+    answer_accuracy_ci95: float
+    recall_at_5_mean: float
+    recall_at_5_ci95: float
+    mrr_mean: float
+    mrr_ci95: float
+    citation_faithfulness_mean: float
+    citation_faithfulness_ci95: float
+    conflict_f1_mean: float
+    conflict_f1_ci95: float
+    avg_tokens_used_mean: float
+    avg_tokens_used_ci95: float
+    avg_raw_private_bytes_moved_mean: float
+    avg_raw_private_bytes_moved_ci95: float
+    avg_edge_to_central_bytes_mean: float
+    avg_edge_to_central_bytes_ci95: float
+    avg_latency_units_mean: float
+    avg_latency_units_ci95: float

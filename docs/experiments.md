@@ -47,3 +47,27 @@ The deterministic benchmark is a controlled starting point. For SCI-grade public
 - Hardware-normalized latency, GPU/CPU time, memory, and energy measurements.
 - Human or expert adjudication for a sampled subset of conflict and citation-faithfulness cases.
 
+## Publication-Track Synthetic Run
+
+Run the larger seeded benchmark with ablations and confidence intervals:
+
+```bash
+python -m faithful_edge_rag.experiments.run_publication \
+  --seeds 10 \
+  --topics 120 \
+  --edge-nodes 4 \
+  --output-dir results/publication
+```
+
+Outputs:
+
+- `results/publication/per_seed_metrics.json`
+- `results/publication/per_seed_metrics.csv`
+- `results/publication/aggregate_metrics.json`
+- `results/publication/aggregate_metrics.csv`
+- `results/publication/summary.md`
+
+Additional ablations:
+
+- `edge_cloud_no_conflict_detection`
+- `edge_cloud_no_context_budget`

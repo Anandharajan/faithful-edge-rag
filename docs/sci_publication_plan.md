@@ -51,11 +51,10 @@ The current repository now has an executable deterministic benchmark. This is an
 
 ## Immediate Next Milestone
 
-Implement the embedding/vector-store experiment path:
+The seeded synthetic benchmark with ablations and confidence intervals is now the first publication-track layer. The next milestone is the embedding/vector-store experiment path:
 
 ```bash
 python -m faithful_edge_rag.experiments.run_vector --output-dir results/vector
 ```
 
 That milestone should replace lexical retrieval with open-source embeddings, Qdrant, and a local edge vector index while preserving the same metric schema used by `results/initial`.
-

@@ -1,8 +1,10 @@
 from pathlib import Path
 
 from faithful_edge_rag.experiments.models import Condition
+from faithful_edge_rag.experiments.publication import run_publication_track
 from faithful_edge_rag.experiments.reporting import write_results
 from faithful_edge_rag.experiments.runner import run_all_conditions
+from faithful_edge_rag.experiments.seeded import build_seeded_corpus
 from faithful_edge_rag.experiments.synthetic import build_synthetic_corpus
 
 
@@ -40,3 +42,28 @@ def test_results_are_written(tmp_path: Path) -> None:
     assert (tmp_path / "metrics.json").exists()
     assert (tmp_path / "metrics.csv").exists()
     assert (tmp_path / "summary.md").exists()
+
+
+def test_seeded_corpus_is_large_and_varied() -> None:
+    chunks, queries = build_seeded_corpus(seed=7, topics=25, edge_nodes=3)
+
+    assert len(queries) == 25
+    assert len(chunks) > 75
+    assert {query.edge_node_id for query in queries} == {"edge-0", "edge-1", "edge-2"}
+    assert any(query.conflict_expected for query in queries)
+    assert any(not query.conflict_expected for query in queries)
+
+
+def test_publication_track_aggregates_seeded_runs() -> None:
+    per_seed_rows, aggregate_rows = run_publication_track(seeds=3, topics=20, edge_nodes=2)
+
+    assert len(per_seed_rows) == 3 * len(Condition)
+    assert {row.condition for row in aggregate_rows} == set(Condition)
+    proposed = next(row for row in aggregate_rows if row.condition is Condition.PROPOSED)
+    no_conflict = next(
+        row for row in aggregate_rows if row.condition is Condition.PROPOSED_NO_CONFLICT
+    )
+
+    assert proposed.conflict_f1_mean >= no_conflict.conflict_f1_mean
+    assert proposed.seeds == 3
+    assert proposed.queries_per_seed == 20
