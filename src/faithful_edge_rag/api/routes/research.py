@@ -15,4 +15,3 @@ async def research_problem() -> ResearchProblemResponse:
             "privacy exposure, and citation faithfulness under ambiguous or conflicting evidence?"
         ),
     )
-

@@ -1,0 +1,5 @@
+condition,queries,answer_accuracy,recall_at_5,mrr,citation_correctness,citation_faithfulness,conflict_f1,avg_tokens_used,avg_raw_private_bytes_moved,avg_edge_to_central_bytes,avg_latency_units,avg_tool_calls
+centralized_rag,8,0.875,1.0,0.9375,0.875,0.875,0.0,167.0,41.875,41.875,6.0,1.0
+long_context_rag,8,0.0,1.0,0.9375,0.0,0.0,0.0,386.375,207.5,1965.625,13.0,1.0
+edge_only_rag,8,1.0,1.0,1.0,1.0,1.0,1.0,167.0,0.0,0.0,6.0,1.0
+edge_cloud_faithful_rag,8,1.0,1.0,0.875,1.0,1.0,1.0,89.0,0.0,300.125,12.0,4.0

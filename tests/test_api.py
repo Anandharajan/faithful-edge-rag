@@ -21,4 +21,3 @@ def test_research_problem_endpoint() -> None:
     payload = response.json()
     assert payload["title"] == "Open-Source Faithful Edge-Cloud RAG"
     assert "citation faithfulness" in payload["problem"]
-

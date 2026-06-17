@@ -37,6 +37,9 @@ rag = [
   "llama-index>=0.11.0"
 ]
 
+[project.scripts]
+faithful-edge-rag-experiments = "faithful_edge_rag.experiments.run:main"
+
 [tool.setuptools.packages.find]
 where = ["src"]
 
@@ -57,4 +60,3 @@ files = ["src", "tests"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 asyncio_mode = "auto"
-

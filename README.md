@@ -87,7 +87,15 @@ curl http://localhost:8000/health
 
 ## Current Status
 
-This repository currently contains the research PRD and software skeleton. The next implementation milestone is the baseline centralized RAG service with document registration, chunk metadata storage, embedding integration, and Qdrant retrieval.
+This repository currently contains the research PRD, software skeleton, API endpoints, and a deterministic experimental harness for the first baseline comparison.
+
+Run the initial experiments:
+
+```bash
+python -m faithful_edge_rag.experiments.run --output-dir results/initial
+```
+
+See [docs/experiments.md](docs/experiments.md) for the current metric definitions and publication-grade extension plan.
 
 ## License
 
