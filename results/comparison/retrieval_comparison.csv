@@ -1,0 +1,2 @@
+source,dataset,retriever,model_name,queries,corpus_documents,recall_at_5,recall_at_10,mrr_at_10,ndcg_at_10,index_seconds,query_seconds
+results/beir-scifact,BEIR SciFact,lexical,bm25_lexical,300,5183,0.7243,0.7843,0.6302,0.6622,,

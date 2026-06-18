@@ -115,3 +115,18 @@ For GPU execution, open the notebook directly in Colab:
 [![Open Dense Retrieval Notebook in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Anandharajan/faithful-edge-rag/blob/main/notebooks/colab_dense_retrieval_scifact.ipynb)
 
 If the repository is private, open Colab first, connect GitHub under `File -> Open notebook -> GitHub`, authorize access, then paste `Anandharajan/faithful-edge-rag`.
+
+## Compare Colab Results
+
+After running the Colab notebook, download `colab-results.zip`, extract it into the repository root so that files land under `results/colab/`, then run:
+
+```bash
+python -m faithful_edge_rag.experiments.compare \
+  --results-dir results \
+  --output-dir results/comparison
+```
+
+Outputs:
+
+- `results/comparison/retrieval_comparison.csv`
+- `results/comparison/retrieval_comparison.md`

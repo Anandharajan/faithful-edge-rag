@@ -131,6 +131,14 @@ Colab notebook:
 
 If the repository is private, open Colab first, connect GitHub under `File -> Open notebook -> GitHub`, authorize access, then paste `Anandharajan/faithful-edge-rag`.
 
+After downloading `colab-results.zip`, extract it into the repository root and run:
+
+```bash
+python -m faithful_edge_rag.experiments.compare \
+  --results-dir results \
+  --output-dir results/comparison
+```
+
 See [docs/experiments.md](docs/experiments.md) for the current metric definitions and publication-grade extension plan.
 
 ## License

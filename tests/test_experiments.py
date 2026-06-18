@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from faithful_edge_rag.experiments.beir import evaluate_scifact, write_benchmark_result
+from faithful_edge_rag.experiments.compare import collect_result_rows, write_comparison
 from faithful_edge_rag.experiments.dense import TextEmbedder, evaluate_dense_scifact
 from faithful_edge_rag.experiments.models import Condition
 from faithful_edge_rag.experiments.publication import run_publication_track
@@ -91,6 +92,36 @@ def test_dense_scifact_fixture_evaluates_metrics(tmp_path: Path) -> None:
     assert row.retriever == "dense"
     assert row.queries == 1
     assert row.recall_at_10 == 1.0
+
+
+def test_compare_collects_metric_files(tmp_path: Path) -> None:
+    metrics_dir = tmp_path / "results" / "colab" / "beir-scifact-bge"
+    metrics_dir.mkdir(parents=True)
+    (metrics_dir / "metrics.json").write_text(
+        """[
+  {
+    "dataset": "BEIR SciFact",
+    "retriever": "dense",
+    "model_name": "BAAI/bge-small-en-v1.5",
+    "queries": 300,
+    "corpus_documents": 5183,
+    "recall_at_5": 0.7,
+    "recall_at_10": 0.8,
+    "mrr_at_10": 0.6,
+    "ndcg_at_10": 0.65,
+    "index_seconds": 12.0,
+    "query_seconds": 3.0
+  }
+]""",
+        encoding="utf-8",
+    )
+
+    rows = collect_result_rows(tmp_path / "results")
+    write_comparison(rows, tmp_path / "results" / "comparison")
+
+    assert len(rows) == 1
+    assert rows[0]["retriever"] == "dense"
+    assert (tmp_path / "results" / "comparison" / "retrieval_comparison.md").exists()
 
 
 class ToyEmbedder(TextEmbedder):
