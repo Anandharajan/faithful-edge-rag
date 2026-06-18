@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from faithful_edge_rag.experiments.beir import evaluate_scifact, write_benchmark_result
+from faithful_edge_rag.experiments.dense import TextEmbedder, evaluate_dense_scifact
 from faithful_edge_rag.experiments.models import Condition
 from faithful_edge_rag.experiments.publication import run_publication_track
 from faithful_edge_rag.experiments.reporting import write_results
@@ -71,6 +72,45 @@ def test_publication_track_aggregates_seeded_runs() -> None:
 
 
 def test_beir_fixture_evaluates_retrieval_metrics(tmp_path: Path) -> None:
+    dataset_dir = _write_tiny_scifact(tmp_path)
+
+    row = evaluate_scifact(dataset_dir)
+    write_benchmark_result(row, tmp_path / "out")
+
+    assert row.queries == 1
+    assert row.corpus_documents == 3
+    assert row.recall_at_10 == 1.0
+    assert (tmp_path / "out" / "summary.md").exists()
+
+
+def test_dense_scifact_fixture_evaluates_metrics(tmp_path: Path) -> None:
+    dataset_dir = _write_tiny_scifact(tmp_path)
+
+    row = evaluate_dense_scifact(dataset_dir, ToyEmbedder())
+
+    assert row.retriever == "dense"
+    assert row.queries == 1
+    assert row.recall_at_10 == 1.0
+
+
+class ToyEmbedder(TextEmbedder):
+    model_name = "toy-embedder"
+
+    def encode(self, texts: list[str]) -> list[list[float]]:
+        vectors: list[list[float]] = []
+        for text in texts:
+            lowered = text.lower()
+            vectors.append(
+                [
+                    float("platelet" in lowered or "aggregation" in lowered),
+                    float("insulin" in lowered or "glucose" in lowered),
+                    float("astronomy" in lowered),
+                ]
+            )
+        return vectors
+
+
+def _write_tiny_scifact(tmp_path: Path) -> Path:
     dataset_dir = tmp_path / "scifact"
     qrels_dir = dataset_dir / "qrels"
     qrels_dir.mkdir(parents=True)
@@ -99,11 +139,4 @@ def test_beir_fixture_evaluates_retrieval_metrics(tmp_path: Path) -> None:
         "query-id\tcorpus-id\tscore\nq1\t0\td1\t1\n",
         encoding="utf-8",
     )
-
-    row = evaluate_scifact(dataset_dir)
-    write_benchmark_result(row, tmp_path / "out")
-
-    assert row.queries == 1
-    assert row.corpus_documents == 3
-    assert row.recall_at_10 == 1.0
-    assert (tmp_path / "out" / "summary.md").exists()
+    return dataset_dir

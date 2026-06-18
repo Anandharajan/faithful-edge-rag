@@ -91,3 +91,23 @@ Outputs:
 - `results/beir-scifact/summary.md`
 
 This benchmark currently evaluates the deterministic BM25-style lexical retriever. The next SCI-grade step is to add Qdrant plus open-source embedding models and compare dense, lexical, and hybrid retrieval on the same public dataset.
+
+## Dense and Hybrid SciFact Retrieval
+
+Run locally or in Colab:
+
+```bash
+python -m faithful_edge_rag.experiments.run_dense_beir \
+  --data-dir data/benchmarks \
+  --output-dir results/beir-dense \
+  --embedding-model BAAI/bge-small-en-v1.5 \
+  --hybrid-alpha 0.65
+```
+
+The command writes lexical, dense, and hybrid metrics to:
+
+- `results/beir-dense/metrics.json`
+- `results/beir-dense/metrics.csv`
+- `results/beir-dense/summary.md`
+
+For GPU execution, use [notebooks/colab_dense_retrieval_scifact.ipynb](../notebooks/colab_dense_retrieval_scifact.ipynb).

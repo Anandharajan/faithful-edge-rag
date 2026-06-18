@@ -113,6 +113,18 @@ python -m faithful_edge_rag.experiments.run_beir \
   --output-dir results/beir-scifact
 ```
 
+Run dense and hybrid retrieval, preferably on Colab GPU:
+
+```bash
+python -m faithful_edge_rag.experiments.run_dense_beir \
+  --data-dir data/benchmarks \
+  --output-dir results/beir-dense \
+  --embedding-model BAAI/bge-small-en-v1.5 \
+  --hybrid-alpha 0.65
+```
+
+Colab notebook: [notebooks/colab_dense_retrieval_scifact.ipynb](notebooks/colab_dense_retrieval_scifact.ipynb)
+
 See [docs/experiments.md](docs/experiments.md) for the current metric definitions and publication-grade extension plan.
 
 ## License
