@@ -110,4 +110,8 @@ The command writes lexical, dense, and hybrid metrics to:
 - `results/beir-dense/metrics.csv`
 - `results/beir-dense/summary.md`
 
-For GPU execution, use [notebooks/colab_dense_retrieval_scifact.ipynb](../notebooks/colab_dense_retrieval_scifact.ipynb).
+For GPU execution, open the notebook directly in Colab:
+
+[![Open Dense Retrieval Notebook in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Anandharajan/faithful-edge-rag/blob/main/notebooks/colab_dense_retrieval_scifact.ipynb)
+
+If the repository is private, open Colab first, connect GitHub under `File -> Open notebook -> GitHub`, authorize access, then paste `Anandharajan/faithful-edge-rag`.

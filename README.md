@@ -2,6 +2,8 @@
 
 Research prototype for a fully open-source edge-cloud retrieval-augmented generation system that answers questions over distributed, private, and conflicting knowledge sources.
 
+[![Open Dense Retrieval Notebook in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Anandharajan/faithful-edge-rag/blob/main/notebooks/colab_dense_retrieval_scifact.ipynb)
+
 The research problem is:
 
 > How can a fully open-source edge-cloud RAG system answer questions over distributed private knowledge while optimizing latency, compute cost, privacy exposure, and citation faithfulness under ambiguous or conflicting evidence?
@@ -123,7 +125,11 @@ python -m faithful_edge_rag.experiments.run_dense_beir \
   --hybrid-alpha 0.65
 ```
 
-Colab notebook: [notebooks/colab_dense_retrieval_scifact.ipynb](notebooks/colab_dense_retrieval_scifact.ipynb)
+Colab notebook:
+
+[![Open Dense Retrieval Notebook in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Anandharajan/faithful-edge-rag/blob/main/notebooks/colab_dense_retrieval_scifact.ipynb)
+
+If the repository is private, open Colab first, connect GitHub under `File -> Open notebook -> GitHub`, authorize access, then paste `Anandharajan/faithful-edge-rag`.
 
 See [docs/experiments.md](docs/experiments.md) for the current metric definitions and publication-grade extension plan.
 
