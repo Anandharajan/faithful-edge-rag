@@ -1,0 +1,39 @@
+[
+  {
+    "retriever": "lexical",
+    "model_name": "bm25_lexical",
+    "dataset": "BEIR SciFact",
+    "queries": 300,
+    "corpus_documents": 5183,
+    "recall_at_5": 0.7242777777777778,
+    "recall_at_10": 0.7842777777777777,
+    "mrr_at_10": 0.6302433862433862,
+    "ndcg_at_10": 0.6622130253683596
+  },
+  {
+    "dataset": "BEIR SciFact",
+    "retriever": "dense",
+    "model_name": "BAAI/bge-small-en-v1.5",
+    "queries": 300,
+    "corpus_documents": 5183,
+    "recall_at_5": 0.7752777777777778,
+    "recall_at_10": 0.8395555555555556,
+    "mrr_at_10": 0.6891296296296296,
+    "ndcg_at_10": 0.7214501712805126,
+    "index_seconds": 43.020531286999926,
+    "query_seconds": 42.75658984100005
+  },
+  {
+    "dataset": "BEIR SciFact",
+    "retriever": "hybrid",
+    "model_name": "BAAI/bge-small-en-v1.5",
+    "queries": 300,
+    "corpus_documents": 5183,
+    "recall_at_5": 0.7833333333333333,
+    "recall_at_10": 0.8578888888888889,
+    "mrr_at_10": 0.7061402116402117,
+    "ndcg_at_10": 0.739684070367931,
+    "index_seconds": 46.05355045300007,
+    "query_seconds": 42.81925580300003
+  }
+]

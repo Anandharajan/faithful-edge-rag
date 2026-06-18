@@ -1,0 +1,9 @@
+{
+  "dataset": "BEIR SciFact",
+  "queries": 300,
+  "corpus_documents": 5183,
+  "recall_at_5": 0.7242777777777778,
+  "recall_at_10": 0.7842777777777777,
+  "mrr_at_10": 0.6302433862433862,
+  "ndcg_at_10": 0.6622130253683596
+}
