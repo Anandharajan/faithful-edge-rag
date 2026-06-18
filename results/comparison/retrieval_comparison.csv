@@ -7,3 +7,8 @@ results/colab/beir-scifact-e5-small,BEIR SciFact,dense,intfloat/e5-small-v2,300,
 results/colab/beir-scifact-e5-small,BEIR SciFact,hybrid,intfloat/e5-small-v2,300,5183,0.7996,0.8362,0.6994,0.7293,51.5054,41.2419
 results/colab/beir-scifact-e5-small,BEIR SciFact,lexical,bm25_lexical,300,5183,0.7243,0.7843,0.6302,0.6622,,
 results/colab/beir-scifact-lexical,BEIR SciFact,lexical,bm25_lexical,300,5183,0.7243,0.7843,0.6302,0.6622,,
+results/beir-multi,BEIR fiqa,lexical,bm25_lexical,648,57638,0.2327,0.3009,0.2949,0.2372,,
+results/beir-multi,BEIR nfcorpus,lexical,bm25_lexical,323,3633,0.1196,0.1486,0.5138,0.3058,,
+results/beir-multi,BEIR scifact,lexical,bm25_lexical,300,5183,0.7243,0.7843,0.6302,0.6622,,
+results/beir-multi-smoke,BEIR scifact,lexical,bm25_lexical,0,100,0.0000,0.0000,0.0000,0.0000,,
+results/beir-multi,BEIR trec-covid,lexical,bm25_lexical,50,171332,0.0084,0.0156,0.7906,0.6453,,

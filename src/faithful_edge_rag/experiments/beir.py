@@ -12,18 +12,27 @@ import certifi
 from faithful_edge_rag.experiments.models import DocumentChunk, RetrievalBenchmarkRow
 from faithful_edge_rag.experiments.retrieval import LexicalRetriever
 
-SCIFACT_URL = "https://public.ukp.informatik.tu-darmstadt.de/thakur/BEIR/datasets/scifact.zip"
+BEIR_BASE_URL = "https://public.ukp.informatik.tu-darmstadt.de/thakur/BEIR/datasets"
+DEFAULT_BEIR_DATASETS = ("scifact", "nfcorpus", "fiqa", "trec-covid")
+
+
+def dataset_url(dataset: str) -> str:
+    return f"{BEIR_BASE_URL}/{dataset}.zip"
 
 
 def download_scifact(data_dir: Path) -> Path:
+    return download_beir_dataset("scifact", data_dir)
+
+
+def download_beir_dataset(dataset: str, data_dir: Path) -> Path:
     data_dir.mkdir(parents=True, exist_ok=True)
-    dataset_dir = data_dir / "scifact"
+    dataset_dir = data_dir / dataset
     if (dataset_dir / "corpus.jsonl").exists():
         return dataset_dir
 
-    archive_path = data_dir / "scifact.zip"
+    archive_path = data_dir / f"{dataset}.zip"
     if not archive_path.exists():
-        _download_file(SCIFACT_URL, archive_path)
+        _download_file(dataset_url(dataset), archive_path)
 
     with zipfile.ZipFile(archive_path) as archive:
         archive.extractall(data_dir)
@@ -42,9 +51,24 @@ def evaluate_scifact(
     max_corpus_docs: int | None = None,
     max_queries: int | None = None,
 ) -> RetrievalBenchmarkRow:
+    return evaluate_beir_dataset(
+        "scifact",
+        dataset_dir,
+        max_corpus_docs=max_corpus_docs,
+        max_queries=max_queries,
+    )
+
+
+def evaluate_beir_dataset(
+    dataset: str,
+    dataset_dir: Path,
+    *,
+    max_corpus_docs: int | None = None,
+    max_queries: int | None = None,
+) -> RetrievalBenchmarkRow:
     chunks = _load_corpus(dataset_dir / "corpus.jsonl", max_docs=max_corpus_docs)
     queries = _load_queries(dataset_dir / "queries.jsonl", max_queries=max_queries)
-    qrels = _load_qrels(dataset_dir / "qrels" / "test.tsv")
+    qrels = _load_qrels(_find_qrels_path(dataset_dir))
 
     retriever = LexicalRetriever(chunks)
     recall_5: list[float] = []
@@ -71,7 +95,7 @@ def evaluate_scifact(
         evaluated_queries += 1
 
     return RetrievalBenchmarkRow(
-        dataset="BEIR SciFact",
+        dataset=f"BEIR {dataset}",
         queries=evaluated_queries,
         corpus_documents=len(chunks),
         recall_at_5=_mean(recall_5),
@@ -81,17 +105,49 @@ def evaluate_scifact(
     )
 
 
+def evaluate_beir_datasets(
+    datasets: list[str],
+    data_dir: Path,
+    *,
+    max_corpus_docs: int | None = None,
+    max_queries: int | None = None,
+) -> list[RetrievalBenchmarkRow]:
+    rows: list[RetrievalBenchmarkRow] = []
+    for dataset in datasets:
+        dataset_dir = download_beir_dataset(dataset, data_dir)
+        rows.append(
+            evaluate_beir_dataset(
+                dataset,
+                dataset_dir,
+                max_corpus_docs=max_corpus_docs,
+                max_queries=max_queries,
+            )
+        )
+    return rows
+
+
 def write_benchmark_result(row: RetrievalBenchmarkRow, output_dir: Path) -> None:
+    write_benchmark_results([row], output_dir, title=f"{row.dataset} Benchmark Results")
+
+
+def write_benchmark_results(
+    rows: list[RetrievalBenchmarkRow], output_dir: Path, *, title: str
+) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
-    payload = asdict(row)
-    (output_dir / "metrics.json").write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
-    (output_dir / "metrics.csv").write_text(
-        "dataset,queries,corpus_documents,recall_at_5,recall_at_10,mrr_at_10,ndcg_at_10\n"
-        f"{row.dataset},{row.queries},{row.corpus_documents},{row.recall_at_5},"
-        f"{row.recall_at_10},{row.mrr_at_10},{row.ndcg_at_10}\n",
-        encoding="utf-8",
+    payload = [asdict(row) for row in rows]
+    json_payload = payload[0] if len(payload) == 1 else payload
+    (output_dir / "metrics.json").write_text(
+        json.dumps(json_payload, indent=2) + "\n", encoding="utf-8"
     )
-    (output_dir / "summary.md").write_text(_summary(row), encoding="utf-8")
+    header = "dataset,queries,corpus_documents,recall_at_5,recall_at_10,mrr_at_10,ndcg_at_10"
+    lines = [header]
+    for row in rows:
+        lines.append(
+            f"{row.dataset},{row.queries},{row.corpus_documents},{row.recall_at_5},"
+            f"{row.recall_at_10},{row.mrr_at_10},{row.ndcg_at_10}"
+        )
+    (output_dir / "metrics.csv").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    (output_dir / "summary.md").write_text(_summary(rows, title=title), encoding="utf-8")
 
 
 def _load_corpus(path: Path, *, max_docs: int | None) -> list[DocumentChunk]:
@@ -107,7 +163,7 @@ def _load_corpus(path: Path, *, max_docs: int | None) -> list[DocumentChunk]:
             chunks.append(
                 DocumentChunk(
                     chunk_id=str(record["_id"]),
-                    topic="scifact",
+                    topic="beir",
                     text=body,
                     claim=body[:240],
                     edge_node_id="central",
@@ -148,6 +204,16 @@ def _load_qrels(path: Path) -> dict[str, dict[str, int]]:
     return qrels
 
 
+def _find_qrels_path(dataset_dir: Path) -> Path:
+    preferred = dataset_dir / "qrels" / "test.tsv"
+    if preferred.exists():
+        return preferred
+    qrels_paths = sorted((dataset_dir / "qrels").glob("*.tsv"))
+    if not qrels_paths:
+        raise FileNotFoundError(f"No qrels TSV file found in {dataset_dir / 'qrels'}")
+    return qrels_paths[0]
+
+
 def _recall_at_k(hit_ids: list[str], relevant: set[str], *, k: int) -> float:
     return len(set(hit_ids[:k]) & relevant) / len(relevant)
 
@@ -173,18 +239,31 @@ def _mean(values: list[float]) -> float:
     return sum(values) / len(values) if values else 0.0
 
 
-def _summary(row: RetrievalBenchmarkRow) -> str:
-    return (
-        "# BEIR SciFact Benchmark Results\n\n"
-        "This is the first real-world public retrieval benchmark result for the project. "
-        "It uses BEIR SciFact and the repository's deterministic BM25-style lexical retriever.\n\n"
-        "| Dataset | Queries | Corpus Docs | Recall@5 | Recall@10 | MRR@10 | nDCG@10 |\n"
-        "| --- | ---: | ---: | ---: | ---: | ---: | ---: |\n"
-        f"| {row.dataset} | {row.queries} | {row.corpus_documents} | "
-        f"{row.recall_at_5:.4f} | {row.recall_at_10:.4f} | "
-        f"{row.mrr_at_10:.4f} | {row.ndcg_at_10:.4f} |\n\n"
-        "## Interpretation\n\n"
-        "This establishes a public benchmark baseline. The next comparison should add "
-        "open-source embedding retrieval with Qdrant and a reranker, then compare against "
-        "this lexical baseline under the same metric schema.\n"
+def _summary(rows: list[RetrievalBenchmarkRow], *, title: str) -> str:
+    lines = [
+        f"# {title}",
+        "",
+        "This real-world public retrieval benchmark uses the repository's deterministic "
+        "BM25-style lexical retriever.",
+        "",
+        "| Dataset | Queries | Corpus Docs | Recall@5 | Recall@10 | MRR@10 | nDCG@10 |",
+        "| --- | ---: | ---: | ---: | ---: | ---: | ---: |",
+    ]
+    for row in rows:
+        lines.append(
+            f"| {row.dataset} | {row.queries} | {row.corpus_documents} | "
+            f"{row.recall_at_5:.4f} | {row.recall_at_10:.4f} | "
+            f"{row.mrr_at_10:.4f} | {row.ndcg_at_10:.4f} |"
+        )
+    lines.extend(
+        [
+            "",
+            "## Interpretation",
+            "",
+            "This establishes public benchmark baselines. Dense, hybrid, and reranked "
+            "retrieval should be compared against this lexical baseline under the same "
+            "metric schema.",
+        ]
     )
+    return "\n".join(lines) + "\n"
+

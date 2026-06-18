@@ -1,0 +1,38 @@
+[
+  {
+    "dataset": "BEIR scifact",
+    "queries": 300,
+    "corpus_documents": 5183,
+    "recall_at_5": 0.7242777777777778,
+    "recall_at_10": 0.7842777777777777,
+    "mrr_at_10": 0.6302433862433862,
+    "ndcg_at_10": 0.6622130253683596
+  },
+  {
+    "dataset": "BEIR nfcorpus",
+    "queries": 323,
+    "corpus_documents": 3633,
+    "recall_at_5": 0.11964859817749693,
+    "recall_at_10": 0.1486339905628572,
+    "mrr_at_10": 0.5138151751928842,
+    "ndcg_at_10": 0.3057529861890133
+  },
+  {
+    "dataset": "BEIR fiqa",
+    "queries": 648,
+    "corpus_documents": 57638,
+    "recall_at_5": 0.23266520002631114,
+    "recall_at_10": 0.3009326578771023,
+    "mrr_at_10": 0.29486760239075055,
+    "ndcg_at_10": 0.23719561294834593
+  },
+  {
+    "dataset": "BEIR trec-covid",
+    "queries": 50,
+    "corpus_documents": 171332,
+    "recall_at_5": 0.008377306564130988,
+    "recall_at_10": 0.015627263723085993,
+    "mrr_at_10": 0.7905555555555556,
+    "ndcg_at_10": 0.6453335289139485
+  }
+]

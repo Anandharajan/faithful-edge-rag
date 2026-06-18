@@ -1,6 +1,11 @@
 from pathlib import Path
 
-from faithful_edge_rag.experiments.beir import evaluate_scifact, write_benchmark_result
+from faithful_edge_rag.experiments.beir import (
+    evaluate_beir_dataset,
+    evaluate_scifact,
+    write_benchmark_result,
+    write_benchmark_results,
+)
 from faithful_edge_rag.experiments.compare import collect_result_rows, write_comparison
 from faithful_edge_rag.experiments.dense import TextEmbedder, evaluate_dense_scifact
 from faithful_edge_rag.experiments.models import Condition
@@ -82,6 +87,20 @@ def test_beir_fixture_evaluates_retrieval_metrics(tmp_path: Path) -> None:
     assert row.corpus_documents == 3
     assert row.recall_at_10 == 1.0
     assert (tmp_path / "out" / "summary.md").exists()
+
+
+def test_generic_beir_fixture_writes_multiple_rows(tmp_path: Path) -> None:
+    dataset_dir = _write_tiny_scifact(tmp_path)
+
+    rows = [
+        evaluate_beir_dataset("toy-a", dataset_dir),
+        evaluate_beir_dataset("toy-b", dataset_dir),
+    ]
+    write_benchmark_results(rows, tmp_path / "multi", title="Toy Multi BEIR")
+
+    assert [row.dataset for row in rows] == ["BEIR toy-a", "BEIR toy-b"]
+    assert (tmp_path / "multi" / "metrics.json").exists()
+    assert "BEIR toy-a" in (tmp_path / "multi" / "summary.md").read_text(encoding="utf-8")
 
 
 def test_dense_scifact_fixture_evaluates_metrics(tmp_path: Path) -> None:

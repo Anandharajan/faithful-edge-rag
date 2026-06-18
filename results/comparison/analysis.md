@@ -42,3 +42,15 @@ These results support the claim that the project should use hybrid retrieval as 
 
 The next experiment should evaluate whether the improved retrieval quality transfers into grounded answer generation and citation faithfulness.
 
+## Multi-Dataset Lexical Baselines
+
+The project now includes lexical BEIR baselines beyond SciFact:
+
+| Dataset | Queries | Docs | Recall@10 | MRR@10 | nDCG@10 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| BEIR scifact | 300 | 5,183 | 0.7843 | 0.6302 | 0.6622 |
+| BEIR nfcorpus | 323 | 3,633 | 0.1486 | 0.5138 | 0.3058 |
+| BEIR fiqa | 648 | 57,638 | 0.3009 | 0.2949 | 0.2372 |
+| BEIR trec-covid | 50 | 171,332 | 0.0156 | 0.7906 | 0.6453 |
+
+These baselines make the retrieval section more credible, but dense/hybrid retrieval must now be run across all four datasets to support a journal-grade retrieval claim.

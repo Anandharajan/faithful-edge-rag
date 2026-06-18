@@ -43,6 +43,7 @@ rag = [
 faithful-edge-rag-experiments = "faithful_edge_rag.experiments.run:main"
 faithful-edge-rag-publication = "faithful_edge_rag.experiments.run_publication:main"
 faithful-edge-rag-beir = "faithful_edge_rag.experiments.run_beir:main"
+faithful-edge-rag-beir-multi = "faithful_edge_rag.experiments.run_beir_multi:main"
 faithful-edge-rag-dense-beir = "faithful_edge_rag.experiments.run_dense_beir:main"
 faithful-edge-rag-compare = "faithful_edge_rag.experiments.compare:main"
 

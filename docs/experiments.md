@@ -92,6 +92,23 @@ Outputs:
 
 This benchmark currently evaluates the deterministic BM25-style lexical retriever. The next SCI-grade step is to add Qdrant plus open-source embedding models and compare dense, lexical, and hybrid retrieval on the same public dataset.
 
+## Multi-Dataset BEIR Lexical Benchmark
+
+Run lexical retrieval across multiple public BEIR datasets:
+
+```bash
+python -m faithful_edge_rag.experiments.run_beir_multi \
+  --data-dir data/benchmarks \
+  --output-dir results/beir-multi \
+  --datasets scifact nfcorpus fiqa trec-covid
+```
+
+Outputs:
+
+- `results/beir-multi/metrics.json`
+- `results/beir-multi/metrics.csv`
+- `results/beir-multi/summary.md`
+
 ## Dense and Hybrid SciFact Retrieval
 
 Run locally or in Colab:

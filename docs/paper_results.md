@@ -7,6 +7,7 @@ This file tracks which experimental evidence is ready for the paper draft.
 - Deterministic synthetic baseline: `results/initial/`
 - Seeded synthetic benchmark with ablations and confidence intervals: `results/publication/`
 - Public BEIR SciFact lexical baseline: `results/beir-scifact/`
+- Multi-dataset BEIR lexical baseline: `results/beir-multi/`
 
 ## Waiting for Colab Output
 
@@ -31,6 +32,6 @@ The comparison table should then be used in the retrieval benchmark section of t
 - Dense retrieval result on BEIR SciFact.
 - Hybrid retrieval result on BEIR SciFact.
 - At least one additional embedding model result.
+- Multi-dataset dense and hybrid results for SciFact, NFCorpus, FiQA, and TREC-COVID.
 - Runtime details from Colab: GPU type, indexing time, query time.
 - Follow-up Qdrant or FAISS index experiment for approximate nearest-neighbor retrieval.
-

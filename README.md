@@ -115,6 +115,15 @@ python -m faithful_edge_rag.experiments.run_beir \
   --output-dir results/beir-scifact
 ```
 
+Run multi-dataset BEIR lexical baselines:
+
+```bash
+python -m faithful_edge_rag.experiments.run_beir_multi \
+  --data-dir data/benchmarks \
+  --output-dir results/beir-multi \
+  --datasets scifact nfcorpus fiqa trec-covid
+```
+
 Run dense and hybrid retrieval, preferably on Colab GPU:
 
 ```bash
